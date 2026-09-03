@@ -43,7 +43,17 @@ class Settings(BaseSettings):
         alias="LOG_LEVEL",
         description="Application logging level (DEBUG, INFO, WARNING, ERROR).",
     )
-
+    enable_voice: bool = Field(default=False, alias="ENABLE_VOICE")
+    elevenlabs_api_key: SecretStr | None = Field(
+        default=None,
+        alias="ELEVENLABS_API_KEY",
+        description="ElevenLabs API key for neural voice synthesis.",
+    )
+    elevenlabs_voice_id: str = Field(
+        default="pNInz6obpgDQGcFmaJgB",
+        alias="ELEVENLABS_VOICE_ID",
+        description="ElevenLabs voice identifier for James Spader / Ultron cadence.",
+    )
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

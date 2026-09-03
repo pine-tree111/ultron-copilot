@@ -23,3 +23,9 @@ class LLMServiceError(UltronError):
     """Raised when the LLM provider fails permanently after retry backoff."""
 
     pass
+
+
+class AudioServiceError(UltronError):
+    """Raised when audio synthesis or playback fails."""
+
+    pass

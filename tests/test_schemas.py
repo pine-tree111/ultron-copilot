@@ -3,6 +3,13 @@
 import pytest
 from pydantic import ValidationError
 
+from app.exceptions import (
+    AudioServiceError,
+    ConfigurationError,
+    LLMServiceError,
+    SecurityBreachError,
+    UltronError,
+)
 from app.models.schemas import ToolCallRequest, ToolName, UltronMood, UltronResponse
 
 
@@ -46,3 +53,11 @@ def test_tool_call_request_validation() -> None:
             tool="unauthorized_destroy_command",  # type: ignore
             reasoning="Will fail",
         )
+
+
+def test_custom_exception_hierarchy() -> None:
+    """Verify that all domain exceptions inherit from UltronError."""
+    assert issubclass(ConfigurationError, UltronError)
+    assert issubclass(SecurityBreachError, UltronError)
+    assert issubclass(LLMServiceError, UltronError)
+    assert issubclass(AudioServiceError, UltronError)
