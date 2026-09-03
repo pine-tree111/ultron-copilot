@@ -1,6 +1,6 @@
 """ElevenLabs neural audio synthesis and playback service.
 
-Streams audio from ElevenLabs and plays directly on Linux with graceful error fallback.
+Streams audio from ElevenLabs with cross-platform speaker playback and graceful error fallback.
 """
 
 from elevenlabs import play
