@@ -62,7 +62,6 @@ You MUST respond with valid JSON matching the exact schema:
 """
 
 
-
 class UltronAgent:
     """Orchestrator for Ultron's cognitive interactions."""
 
@@ -131,9 +130,7 @@ class UltronAgent:
             validated_response = UltronResponse.model_validate(parsed_data)
 
             # Record assistant response into memory history
-            self.history.append(
-                {"role": "assistant", "content": validated_response.speech}
-            )
+            self.history.append({"role": "assistant", "content": validated_response.speech})
 
             logger.info(
                 "ultron_response_synthesized",

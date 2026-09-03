@@ -64,15 +64,11 @@ def main() -> None:
                 action = response.action
                 authorized = True
                 if action.requires_confirmation:
-                    authorized = prompt_human_confirmation(
-                        action.tool.value, action.reasoning
-                    )
+                    authorized = prompt_human_confirmation(action.tool.value, action.reasoning)
 
                 if authorized:
                     tool_result = execute_tool_safely(action.tool, action.arguments)
-                    console.print(
-                        f"[dim cyan][System Tool Output][/dim cyan] {tool_result}\n"
-                    )
+                    console.print(f"[dim cyan][System Tool Output][/dim cyan] {tool_result}\n")
                 else:
                     console.print(
                         "[yellow]Execution denied by developer. Action aborted.[/yellow]\n"
@@ -87,9 +83,7 @@ def main() -> None:
             console.print(f"\n[bold red][Security Alert]:[/bold red] {err}\n")
         except Exception as err:
             logger.exception("unexpected_fatal_error", error=str(err))
-            console.print(
-                f"\n[bold red][System Failure]:[/bold red] Critical error: {err}\n"
-            )
+            console.print(f"\n[bold red][System Failure]:[/bold red] Critical error: {err}\n")
 
 
 if __name__ == "__main__":

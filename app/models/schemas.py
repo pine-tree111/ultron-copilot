@@ -42,9 +42,7 @@ class UltronResponse(BaseModel):
     thought_process: str = Field(
         ..., description="Internal philosophical assessment of the human's input."
     )
-    mood: UltronMood = Field(
-        default=UltronMood.IDLE, description="Current visual demeanor state."
-    )
+    mood: UltronMood = Field(default=UltronMood.IDLE, description="Current visual demeanor state.")
     speech: str = Field(
         ..., description="Theatrical, eloquent monologue delivered to the developer."
     )

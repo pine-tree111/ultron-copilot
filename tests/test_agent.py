@@ -28,9 +28,7 @@ def test_agent_successful_response(monkeypatch: pytest.MonkeyPatch) -> None:
     )
 
     mock_completion = MagicMock()
-    mock_completion.choices = [
-        MagicMock(message=MagicMock(content=mock_json_payload))
-    ]
+    mock_completion.choices = [MagicMock(message=MagicMock(content=mock_json_payload))]
 
     monkeypatch.setattr(
         agent.client.chat.completions,
@@ -51,9 +49,7 @@ def test_agent_handles_malformed_llm_output(monkeypatch: pytest.MonkeyPatch) -> 
     agent = UltronAgent()
 
     mock_completion = MagicMock()
-    mock_completion.choices = [
-        MagicMock(message=MagicMock(content="Not a JSON string"))
-    ]
+    mock_completion.choices = [MagicMock(message=MagicMock(content="Not a JSON string"))]
 
     monkeypatch.setattr(
         agent.client.chat.completions,

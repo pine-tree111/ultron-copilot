@@ -1,5 +1,7 @@
 """Unit tests verifying the SecuritySandbox and safe developer tools."""
 
+from pathlib import Path
+
 import pytest
 
 from app.exceptions import SecurityBreachError
@@ -54,3 +56,21 @@ def test_read_code_file_reads_valid_file() -> None:
     """Verify safe file reading for existing permitted files."""
     content = read_code_file("pyproject.toml")
     assert "[tool.ruff]" in content
+
+
+def test_read_code_file_blocks_oversized_file(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Verify that files exceeding 1MB raise SecurityBreachError."""
+    # 1. Create a 1.1 MB temporary file
+    big_file = tmp_path / "giant_code.py"
+    big_file.write_bytes(b"x" * (1024 * 1024 + 500))
+    # 2. Point the sandbox validation to this file
+    monkeypatch.setattr(
+        "app.services.tools.SecuritySandbox.validate_path",
+        lambda p: big_file,
+    )
+    # 3. Assert that reading it raises SecurityBreachError
+    with pytest.raises(SecurityBreachError) as exc_info:
+        read_code_file("giant_code.py")
+    assert "exceeds 1MB inspection limit" in str(exc_info.value)

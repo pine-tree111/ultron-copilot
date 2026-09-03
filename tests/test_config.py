@@ -33,23 +33,23 @@ def test_missing_api_key_raises_validation_error(monkeypatch: pytest.MonkeyPatch
         Settings(_env_file=None)
 
 
-def test_voice_settings_defaults() -> None:
-  """Verify voice settings have safe defaults (disabled by default)."""
-  settings = Settings()
-  assert settings.enable_voice is False
-  assert settings.elevenlabs_api_key is None
-  assert settings.elevenlabs_voice_id == "pNInz6obpgDQGcFmaJgB"
+def test_voice_settings_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Verify voice settings have safe defaults (disabled by default)."""
+    monkeypatch.delenv("ELEVENLABS_API_KEY", raising=False)
+    # _env_file=None tells it to test the pure defaults without reading your real .env file
+    settings = Settings(_env_file=None)
+
+    assert settings.enable_voice is False
+    assert settings.elevenlabs_api_key is None
+    assert settings.elevenlabs_voice_id == "pNInz6obpgDQGcFmaJgB"
 
 
 def test_elevenlabs_key_masks_in_repr(monkeypatch: pytest.MonkeyPatch) -> None:
-  """Verify that ElevenLabs API key is masked by SecretStr."""
-  monkeypatch.setenv("ELEVENLABS_API_KEY", "secret-elevenlabs-key-999")
-  settings = Settings()
+    """Verify that ElevenLabs API key is masked by SecretStr."""
+    monkeypatch.setenv("ELEVENLABS_API_KEY", "secret-elevenlabs-key-999")
+    settings = Settings()
 
-  assert settings.elevenlabs_api_key is not None
-  assert (
-      settings.elevenlabs_api_key.get_secret_value()
-      == "secret-elevenlabs-key-999"
-  )
-  assert "secret-elevenlabs-key-999" not in repr(settings)
-  assert "**********" in repr(settings)
+    assert settings.elevenlabs_api_key is not None
+    assert settings.elevenlabs_api_key.get_secret_value() == "secret-elevenlabs-key-999"
+    assert "secret-elevenlabs-key-999" not in repr(settings)
+    assert "**********" in repr(settings)

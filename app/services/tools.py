@@ -19,13 +19,18 @@ BLACKLISTED_PATTERNS = {
     ".env",
     "id_rsa",
     "id_ed25519",
+    "id_ecdsa",
     ".pem",
     ".key",
     ".git",
     "credentials",
     "passwd",
     "shadow",
+    "token",
+    ".aws",
 }
+# Maximum allowed file size for code review (1 MB)
+MAX_FILE_SIZE_BYTES = 1024 * 1024
 
 
 class SecuritySandbox:
@@ -62,9 +67,7 @@ class SecuritySandbox:
                 resolved_path=str(resolved),
                 project_root=str(root),
             )
-            raise SecurityBreachError(
-                f"Access denied: '{target_path}' escapes project boundary."
-            )
+            raise SecurityBreachError(f"Access denied: '{target_path}' escapes project boundary.")
 
         # 2. Blacklist check
         name_lower = resolved.name.lower()
@@ -143,12 +146,16 @@ def read_code_file(relative_path: str) -> str:
         The content of the file.
 
     Raises:
-        SecurityBreachError: If path violates security sandbox.
+        SecurityBreachError: If path violates security sandbox or exceeds size limit.
         FileNotFoundError: If the file does not exist.
     """
     safe_path = SecuritySandbox.validate_path(relative_path)
 
     if not safe_path.is_file():
         raise FileNotFoundError(f"File not found: {relative_path}")
+
+    # 🛡️ Memory Protection: Reject files larger than 1 MB
+    if safe_path.stat().st_size > MAX_FILE_SIZE_BYTES:
+        raise SecurityBreachError(f"File '{relative_path}' exceeds 1MB inspection limit.")
 
     return safe_path.read_text(encoding="utf-8")
