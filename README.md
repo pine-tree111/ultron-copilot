@@ -108,6 +108,12 @@ ELEVENLABS_VOICE_ID=pNInz6obpgDQGcFmaJgB
 python -m app.main
 ```
 
+```markdown
+### 🎯 Reviewing Another Project
+You can point Ultron at any repository on your machine by passing `PROJECT_ROOT`:
+```bash
+PROJECT_ROOT=/path/to/my-other-project python -m app.main
+
 ---
 
 ## Running Automated Tests
