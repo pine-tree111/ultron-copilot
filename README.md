@@ -40,9 +40,9 @@ flowchart TD
     
     Agent -->|Proposed Tool Action| ToolRegistry[app/services/tools.py]
     ToolRegistry -->|Path & Permission Checks| Sandbox{Security Sandbox}
-    Sandbox -->|Human Prompt (y/N)| HumanGate[Developer Authorization]
+    Sandbox -->|"Human Prompt (y/N)"| HumanGate[Developer Authorization]
     HumanGate -->|Approved| SystemOps[Safe System Operations]
-    HumanGate -->|Denied / Violation| SecurityAlert[Action Aborted / SecurityBreachError]
+    HumanGate -->|"Denied / Violation"| SecurityAlert[Action Aborted / SecurityBreachError]
 ```
 
 ---
