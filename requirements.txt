@@ -10,4 +10,6 @@ pytest>=9.0.3,<10.0.0
 pytest-mock>=3.14.0,<4.0.0
 ruff>=0.4.0,<1.0.0
 elevenlabs>=1.5.0,<2.0.0
+sounddevice>=0.4.6,<1.0.0
+faster-whisper>=1.0.0,<2.0.0
 

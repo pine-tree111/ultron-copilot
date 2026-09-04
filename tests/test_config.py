@@ -38,10 +38,13 @@ def test_voice_settings_defaults(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("ELEVENLABS_API_KEY", raising=False)
     # _env_file=None tells it to test the pure defaults without reading your real .env file
     settings = Settings(_env_file=None)
-
+    # Output voice defaults (disabled)
     assert settings.enable_voice is False
     assert settings.elevenlabs_api_key is None
     assert settings.elevenlabs_voice_id == "pNInz6obpgDQGcFmaJgB"
+    # Microphone input defaults (disabled for privacy)
+    assert settings.enable_mic is False
+    assert settings.whisper_model == "base.en"
 
 
 def test_elevenlabs_key_masks_in_repr(monkeypatch: pytest.MonkeyPatch) -> None:

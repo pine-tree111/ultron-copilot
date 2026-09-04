@@ -43,6 +43,7 @@ class Settings(BaseSettings):
         alias="LOG_LEVEL",
         description="Application logging level (DEBUG, INFO, WARNING, ERROR).",
     )
+    # Voice Output Settings (TTS)
     enable_voice: bool = Field(default=False, alias="ENABLE_VOICE")
     elevenlabs_api_key: SecretStr | None = Field(
         default=None,
@@ -54,6 +55,10 @@ class Settings(BaseSettings):
         alias="ELEVENLABS_VOICE_ID",
         description="ElevenLabs voice identifier for James Spader / Ultron cadence.",
     )
+    # Voice Input Settings (STT)
+    enable_mic: bool = Field(default=False, alias="ENABLE_MIC")
+    whisper_model: str = Field(default="base.en", alias="WHISPER_MODEL")
+    # Pydantic BaseSettings configuration: load from .env and ignore extraneous system variables
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

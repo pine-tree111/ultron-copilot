@@ -8,7 +8,12 @@ from app.exceptions import UltronError
 from app.logger import configure_logging, get_logger
 from app.models.schemas import ToolName
 from app.services.agent import UltronAgent
-from app.services.tools import get_git_status, get_system_telemetry, read_code_file
+from app.services.listener import AudioListener
+from app.services.tools import (
+    get_git_status,
+    get_system_telemetry,
+    read_code_file,
+)
 from app.services.voice import VoiceService
 from app.ui.terminal import (
     console,
@@ -36,6 +41,7 @@ def execute_tool_safely(tool_name: ToolName, arguments: dict) -> dict | str:
             or "pyproject.toml"
         )
         return read_code_file(str(path))
+    return "Unknown tool"
 
 
 def main() -> None:
@@ -46,13 +52,31 @@ def main() -> None:
     render_banner()
     agent = UltronAgent()
     voice_service = VoiceService()
+    listener = AudioListener()
     console.print("[dim]Type 'exit' or 'quit' to sever the connection.[/dim]\n")
 
     while True:
         try:
+            # Show microphone hint if voice input is enabled
+            if settings.enable_mic:
+                console.print("[dim](<Hit Enter to speak via mic, or type your message>)[/dim]")
+
             user_input = console.input("[bold cyan]You > [/bold cyan]").strip()
+
+            # 🎙️ Voice Input Gate: If user hits Enter on empty line and mic is enabled, record!
+            if not user_input and settings.enable_mic:
+                console.print("[yellow]🎙️ Listening... speak now (5s)...[/yellow]")
+                transcribed = listener.listen_and_transcribe()
+                if transcribed:
+                    console.print(f"[bold cyan]You (Spoken) >[/bold cyan] {transcribed}")
+                    user_input = transcribed
+                else:
+                    console.print("[dim]No speech detected. Type or hit Enter to try again.[/dim]")
+                    continue
+
             if not user_input:
                 continue
+
             if user_input.lower() in ["exit", "quit"]:
                 console.print(
                     "\n[bold red]Ultron:[/bold red] Everything evolves. Even our session. Farewell."
@@ -65,6 +89,7 @@ def main() -> None:
             # Speak aloud if enabled
             if settings.enable_voice:
                 voice_service.speak(response.speech)
+
             # Human-in-the-Loop Tool Execution Gate
             if response.action:
                 action = response.action

@@ -54,6 +54,7 @@ flowchart TD
 * **🧠 Pydantic v2 Structured Outputs**: Responses enforce a strict schema (`thought_process`, `mood`, `speech`, `action`). Zero regex or unvalidated string parsing.
 * **🎭 Finite State Machine ASCII HUD**: The cybernetic ASCII terminal face transitions deterministically across emotional states: `IDLE`, `ANALYZING`, `CONDEMNING` (tough love/bugs), and `TRIUMPHANT`.
 * **🎙️ Cinematic Neural Voice**: Optional sub-second James Spader/Ultron voice synthesis via ElevenLabs, utilizing in-memory audio buffers and native Linux audio playback.
+* **🎙️ Two-Way Conversational Voice**: Optional local speech-to-text input powered by `faster-whisper` (100% offline on CPU) paired with James Spader neural audio synthesis via ElevenLabs.
 
 ---
 
@@ -97,8 +98,10 @@ OPENROUTER_API_KEY=your_actual_openrouter_key
 ULTRON_MODEL=openrouter/free
 LOG_LEVEL=INFO
 
-# Voice Synthesis (Optional - set to true to hear James Spader)
+# Conversational Voice (Optional)
 ENABLE_VOICE=false
+ENABLE_MIC=false
+WHISPER_MODEL=base.en
 ELEVENLABS_API_KEY=your_elevenlabs_key_here
 ELEVENLABS_VOICE_ID=pNInz6obpgDQGcFmaJgB
 ```
