@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Lint & Test Suite
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Ruff Linting & Formatting Check
+        run: |
+          ruff check .
+          ruff format --check .
+
+      - name: Run Pytest Unit Tests
+        env:
+          OPENROUTER_API_KEY: "dummy-ci-key"
+          ENABLE_VOICE: "false"
+        run: |
+          pytest tests/ -v
