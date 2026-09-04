@@ -27,9 +27,15 @@ def execute_tool_safely(tool_name: ToolName, arguments: dict) -> dict | str:
     elif tool_name == ToolName.GIT_STATUS:
         return get_git_status()
     elif tool_name == ToolName.CODE_REVIEW:
-        path = arguments.get("path", "pyproject.toml")
-        return read_code_file(path)
-    return "Unknown tool"
+        # Accept "path", "file_path", "file", or "relative_path" from the LLM
+        path = (
+            arguments.get("path")
+            or arguments.get("file_path")
+            or arguments.get("relative_path")
+            or arguments.get("file")
+            or "pyproject.toml"
+        )
+        return read_code_file(str(path))
 
 
 def main() -> None:
@@ -62,9 +68,7 @@ def main() -> None:
             # Human-in-the-Loop Tool Execution Gate
             if response.action:
                 action = response.action
-                authorized = True
-                if action.requires_confirmation:
-                    authorized = prompt_human_confirmation(action.tool.value, action.reasoning)
+                authorized = prompt_human_confirmation(action.tool.value, action.reasoning)
 
                 if authorized:
                     tool_result = execute_tool_safely(action.tool, action.arguments)

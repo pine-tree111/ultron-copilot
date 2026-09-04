@@ -111,22 +111,22 @@ class UltronAgent:
         return content
 
     def think_and_respond(self, user_message: str) -> UltronResponse:
-        """Process user input, enforce UltronResponse schema, and update memory.
-
-        Args:
-            user_message: Input text from the developer.
-
-        Returns:
-            Validated UltronResponse instance.
-
-        Raises:
-            LLMServiceError: If API call fails permanently or response violates schema.
-        """
+        """Process user input, enforce UltronResponse schema, and update memory."""
         self.history.append({"role": "user", "content": user_message})
 
         try:
-            raw_json = self._call_api_with_retry(self.history)
-            parsed_data = json.loads(raw_json)
+            raw_content = self._call_api_with_retry(self.history)
+
+            # 🛡️ Extract true JSON even if the model chats or adds markdown before/after it
+            start_idx = raw_content.find("{")
+            end_idx = raw_content.rfind("}")
+
+            if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+                clean_json = raw_content[start_idx : end_idx + 1]
+            else:
+                clean_json = raw_content.strip()
+
+            parsed_data = json.loads(clean_json)
             validated_response = UltronResponse.model_validate(parsed_data)
 
             # Record assistant response into memory history
@@ -140,5 +140,9 @@ class UltronAgent:
             return validated_response
 
         except Exception as err:
-            logger.error("ultron_cognition_failed", error=str(err))
+            logger.error(
+                "ultron_cognition_failed",
+                error=str(err),
+                raw_preview=raw_content[:200] if "raw_content" in locals() else "",
+            )
             raise LLMServiceError(f"Cognitive loop disrupted: {err}") from err
