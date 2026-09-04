@@ -38,8 +38,10 @@ jobs:
         run: |
           pytest tests/ -v
 
+            # 🛡️ Automated Security Audit
       - name: Run Security Audit (Bandit & Dependency Check)
         run: |
+          python -m pip install --upgrade pip setuptools
           pip install bandit pip-audit
           bandit -r app/ -ll -ii
-          pip-audit
+          pip-audit -r requirements.txt
