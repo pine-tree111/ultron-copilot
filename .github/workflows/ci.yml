@@ -37,3 +37,9 @@ jobs:
           ENABLE_VOICE: "false"
         run: |
           pytest tests/ -v
+
+      - name: Run Security Audit (Bandit & Dependency Check)
+        run: |
+          pip install bandit pip-audit
+          bandit -r app/ -ll -ii
+          pip-audit
